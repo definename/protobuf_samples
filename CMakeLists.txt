@@ -68,47 +68,27 @@ if(BUILD_WITH_PROTOBUF_CPP)
 			-DBUILD_SHARED_LIBS=OFF
 			-Dprotobuf_VERBOSE=ON
 		SOURCE_SUBDIR cmake
-		PATCH_COMMAND 
+		PATCH_COMMAND
 			${CMAKE_COMMAND} -P ${PATCH_PATH}/protobuf-cpp-3.7.1.patches/patch.cmake ${CMAKE_SOURCE_DIR}
 		)
-	SET_PROPERTY(TARGET protobuf PROPERTY FOLDER "External")
-	
-	set(PROTOFILE_PATH ${CMAKE_CURRENT_LIST_DIR}/modules/protobuf_null/protofiles)
-	set(PROTOFILES
-		${PROTOFILE_PATH}/Boss.proto
-		${PROTOFILE_PATH}/Slave.proto
-		)
 
-	set(PROTOBUF_GEN_ROOT ${EXTERNAL_INSTALL_PATH}/PROTOBUF_GEN)
 	ExternalProject_Add(
-		protobuf-gen
+		protogen
 		DEPENDS
 			protobuf
-		URL "${EXTERNAL_PATH}/protobuf-gen.zip"
-		URL_MD5 03cdfc39a49675b4948bea24ea8b3db3
+		URL "${EXTERNAL_PATH}/protogen-1.0.zip"
+		URL_MD5 c523a712dc4211977a89543dc00a1cbe
 		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${PROTOBUF_GEN_ROOT}
+			-DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_INSTALL_PATH}/PROTOGEN
 			-DPROTOBUF_ROOT=${PROTOBUF_ROOT}
-			-DPROTOFILES=${PROTOFILES}
-		PATCH_COMMAND 
-			${CMAKE_COMMAND} -P ${PATCH_PATH}/protobuf-gen.patches/patch.cmake ${CMAKE_SOURCE_DIR}
+			-DPROTOFILES_ROOT=${CMAKE_CURRENT_LIST_DIR}/modules/protobuf_null/protofiles
+		PATCH_COMMAND
+			${CMAKE_COMMAND} -P ${PATCH_PATH}/protogen-1.0.patches/patch.cmake ${CMAKE_SOURCE_DIR}
 		)
-	SET_PROPERTY(TARGET protobuf-gen PROPERTY FOLDER "External")
-	# set(Protobuf_PROTOC_EXECUTABLE ${PROTOBUF_ROOT}/bin/protoc.exe)
-	# set(Protobuf_LIBRARY
-		# debug ${PROTOBUF_ROOT}/lib/libprotobufd.lib
-		# optimized ${PROTOBUF_ROOT}/lib/libprotobuf.lib
-		# )
-	# set(Protobuf_PROTOC_LIBRARY
-		# debug ${PROTOBUF_ROOT}/lib/libprotocd.lib
-		# optimized ${PROTOBUF_ROOT}/lib/libprotoc.lib
-		# )
-	# set(Protobuf_LITE_LIBRARY
-		# debug ${PROTOBUF_ROOT}/lib/libprotobuf-lited.lib
-		# optimized ${PROTOBUF_ROOT}/lib/libprotobuf-lite.lib
-		# )
-	# find_package(Protobuf REQUIRED)
-	
+
+	SET_PROPERTY(TARGET protobuf PROPERTY FOLDER "External")
+	SET_PROPERTY(TARGET protogen PROPERTY FOLDER "External")
+
 	add_subdirectory(modules/protobuf_null)
 endif()
 
