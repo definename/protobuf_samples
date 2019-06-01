@@ -72,22 +72,24 @@ if(BUILD_WITH_PROTOBUF_CPP)
 			${CMAKE_COMMAND} -P ${PATCH_PATH}/protobuf-cpp-3.7.1.patches/patch.cmake ${CMAKE_SOURCE_DIR}
 		)
 
+	set(PROTOFILES_ROOT ${CMAKE_SOURCE_DIR}/protofiles)
+	set(PROTOGEN_ROOT ${EXTERNAL_INSTALL_PATH}/PROTOGEN)
 	ExternalProject_Add(
 		protogen
+		SOURCE_DIR ${EXTERNAL_PATH}/protogen-1.0
 		DEPENDS
 			protobuf
-		URL "${EXTERNAL_PATH}/protogen-1.0.zip"
-		URL_MD5 c523a712dc4211977a89543dc00a1cbe
 		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_INSTALL_PATH}/PROTOGEN
+			-DCMAKE_INSTALL_PREFIX:PATH=${PROTOGEN_ROOT}
 			-DPROTOBUF_ROOT=${PROTOBUF_ROOT}
-			-DPROTOFILES_ROOT=${CMAKE_CURRENT_LIST_DIR}/modules/protobuf_null/protofiles
-		PATCH_COMMAND
-			${CMAKE_COMMAND} -P ${PATCH_PATH}/protogen-1.0.patches/patch.cmake ${CMAKE_SOURCE_DIR}
+			-DPROTOFILES_ROOT=${PROTOFILES_ROOT}
 		)
 
 	SET_PROPERTY(TARGET protobuf PROPERTY FOLDER "External")
 	SET_PROPERTY(TARGET protogen PROPERTY FOLDER "External")
+	
+	ExternalProject_Get_property(protogen SOURCE_DIR)
+	message(STATUS ">>>>>>>>>> ${SOURCE_DIR}")
 
 	add_subdirectory(modules/protobuf_null)
 endif()
