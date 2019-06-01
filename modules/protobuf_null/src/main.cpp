@@ -1,5 +1,4 @@
 #include "pch.h"
-//#include "Boss.pb.h"
 
 int main(int argc, char *argv[])
 {
@@ -7,7 +6,6 @@ int main(int argc, char *argv[])
 	{
 		std::cout << "zlib version: " << zlib_version << std::endl;
 
-/*
 		std::string archive;
 
 		// Serialization.
@@ -42,7 +40,6 @@ int main(int argc, char *argv[])
 			}
 		
 		}
-		*/
 	}
 	catch (const std::exception& e)
 	{

@@ -2,17 +2,17 @@ cmake_minimum_required(VERSION 3.14.4)
 
 project(protobuf_samples)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-
 ###########################################################
 # Build options ###########################################
 
+option(BUILD_WITH_STATIC_CRT "Use static run-time libraries (/MT or /MTd linker flags)" ON)
 option(BUILD_WITH_PROTOBUF_CPP "Build with protobuf CPP" ON)
 option(BUILD_WITH_PROTOBUF_C "Build with protobuf C" OFF)
 
 ###########################################################
 # Includes ################################################
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(PCHSupport)
 include(CRTLinkage)
 include(ExternalProject)
@@ -54,7 +54,7 @@ SET_PROPERTY(TARGET zlib PROPERTY FOLDER "External")
 # PROTOBUF-CPP #############################################
 
 if(BUILD_WITH_PROTOBUF_CPP)
-	set(PROTOBUF_ROOT ${EXTERNAL_INSTALL_PATH}/PROTOBUF)
+	set(Protobuf_ROOT ${EXTERNAL_INSTALL_PATH}/PROTOBUF)
 	ExternalProject_Add(
 		protobuf
 		DEPENDS
@@ -62,7 +62,7 @@ if(BUILD_WITH_PROTOBUF_CPP)
 		URL "${EXTERNAL_PATH}/protobuf-cpp-3.7.1.zip"
 		URL_MD5 7d819ec1943f1fef3a85aaad32e122f4
 		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${PROTOBUF_ROOT}
+			-DCMAKE_INSTALL_PREFIX:PATH=${Protobuf_ROOT}
 			-DZLIB_ROOT:PATH=${ZLIB_ROOT}
 			-Dprotobuf_BUILD_TESTS=OFF
 			-DBUILD_SHARED_LIBS=OFF
@@ -71,25 +71,30 @@ if(BUILD_WITH_PROTOBUF_CPP)
 		PATCH_COMMAND
 			${CMAKE_COMMAND} -P ${PATCH_PATH}/protobuf-cpp-3.7.1.patches/patch.cmake ${CMAKE_SOURCE_DIR}
 		)
+	set(Protobuf_INCLUDE_DIRS ${Protobuf_ROOT}/include)
+	set(Protobuf_LIBRARIES
+		debug ${Protobuf_ROOT}/lib/libprotobufd.lib
+		optimized ${Protobuf_ROOT}/lib/libprotobuf.lib
+		)
 
-	set(PROTOFILES_ROOT ${CMAKE_SOURCE_DIR}/protofiles)
-	set(PROTOGEN_ROOT ${EXTERNAL_INSTALL_PATH}/PROTOGEN)
+	set(Protofiles_ROOT ${CMAKE_SOURCE_DIR}/protofiles)
+	set(Protogen_ROOT ${EXTERNAL_INSTALL_PATH}/PROTOGEN)
+	set(Protogen_INCLUDE_DIRS ${Protogen_ROOT})
+	set(Protogen_LIBRARIES ${Protogen_ROOT}/protogen.lib)
 	ExternalProject_Add(
 		protogen
 		SOURCE_DIR ${EXTERNAL_PATH}/protogen-1.0
 		DEPENDS
 			protobuf
 		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${PROTOGEN_ROOT}
-			-DPROTOBUF_ROOT=${PROTOBUF_ROOT}
-			-DPROTOFILES_ROOT=${PROTOFILES_ROOT}
+			-DCMAKE_INSTALL_PREFIX:PATH=${Protogen_ROOT}
+			-DBUILD_WITH_STATIC_CRT=ON
+			-DProtobuf_ROOT=${Protobuf_ROOT}
+			-DProtofiles_ROOT=${Protofiles_ROOT}
 		)
 
 	SET_PROPERTY(TARGET protobuf PROPERTY FOLDER "External")
 	SET_PROPERTY(TARGET protogen PROPERTY FOLDER "External")
-	
-	ExternalProject_Get_property(protogen SOURCE_DIR)
-	message(STATUS ">>>>>>>>>> ${SOURCE_DIR}")
 
 	add_subdirectory(modules/protobuf_null)
 endif()
