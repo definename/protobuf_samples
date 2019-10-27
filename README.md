@@ -7,7 +7,7 @@ sudo apt install libprotoc-dev
 sudo apt protobuf-compiler
 
 ./autogen.sh
-./configure --prefix=$HOME/usr
+./configure --prefix=/usr
 make
 sudo make install
 ```
