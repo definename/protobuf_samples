@@ -1,6 +1,6 @@
 # protobuf-c
 
-[Wiki](https://github.com/protobuf-c/protobuf-c/wiki)
+[the Wiki](https://github.com/protobuf-c/protobuf-c/wiki)
 
 ## Build/Install:
 ```
