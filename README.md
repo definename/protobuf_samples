@@ -6,7 +6,7 @@
 ```
 sudo apt install libprotobuf-dev
 sudo apt install libprotoc-dev
-sudo apt protobuf-compiler
+sudo apt install protobuf-compiler
 
 ./autogen.sh
 ./configure --prefix=/usr
